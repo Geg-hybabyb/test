@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const qst = document.querySelector('.question'),
           ans = document.querySelectorAll('.answer'),
+          ansverBlock = document.querySelector('.answers'),
           btnCnf = document.querySelector('.confirm'),
           qstList = document.querySelector('.quest-list'),
           btnNext = document.querySelector('.next');
@@ -25,8 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let counter = 0,
         answerСheck,
-        totalCorrectAnsver = 0,
-        blackList =[];
+        totalCorrectAnsver = 0;
 
     qstPule.forEach((qstBlock, i) => {
         const block = document.createElement('div');
@@ -42,72 +42,46 @@ document.addEventListener('DOMContentLoaded', () => {
         block.addEventListener('click', (e) => {
             qstPule.forEach((item, i) => {
                 if(i == e.target.getAttribute('data-list')){
-                    qst.textContent = item.question;
-                    ans.forEach((ans, j) => {
-                        ans.textContent = qstPule[i].ansver[j];
-                        ans.classList.remove('activity')
-                    });
-                    
+                    counter = e.target.getAttribute('data-list');   
+
+                    nextQuestion()
+                    if(qstPule[counter].completed === true) {
+                        ansverBlock.removeEventListener('click', elem);
+                    };
+
                     chaildQstList.forEach(btn => {
                         btn.classList.remove('activity')
                     });
                     block.classList.add('activity');
                 };
             });
-            counter = e.target.getAttribute('data-list');   
-            console.log(counter);
+
             btnNext.classList.add('hide');
-            btnCnf.classList.remove('hide')
-            
+            btnCnf.classList.remove('hide');
         });
         chaildQstList[0].classList.add('activity');
     });
 
-
-
-    function nextQuestion() {
-
-
-        qst.textContent = qstPule[counter].question;
-        
-        const elem = (e) => {
+    const elem = (e) => {
+        if(e.target.getAttribute('data-choice')){
             ans.forEach(btn => {
                 btn.classList.remove('activity')
             });
 
-            
             e.target.classList.add('activity');
             answerСheck = e.target.textContent;
-        };
-
+        }
+    };
+    function nextQuestion() {
+        qst.textContent = qstPule[counter].question;
         
-        const a = blackList.some(bl => {
-            console.log(bl);
-            return bl == counter
+        ansverBlock.addEventListener('click', elem);
+
+        ans.forEach((item, i) => {
+            item.textContent = qstPule[counter].ansver[i];
+
+            item.classList.remove('activity');
         });
-
-
-                ans.forEach((item, i) => {
-                    item.textContent = qstPule[counter].ansver[i];
-        
-        
-                    item.classList.remove('activity');
-                    
-                    // console.log(blackList[i] == counter);
-                    // console.log(blackList, counter);
-                    
-                    // blackList.forEach((bl) => {
-                        // })
-                        
-                        if(a) {
-                            item.addEventListener('click', elem);
-                        } else {
-                            item.addEventListener('click', elem);
-                            item.removeEventListener('click', elem); 
-                        }
-                    });
-            
-        console.log(a);
     };
 
     nextQuestion();
@@ -122,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if(counter < qstPule.length - 1) {
-            blackList.push(counter);
             counter++
             nextQuestion();
         } else {
@@ -140,12 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.querySelector('.result-block').classList.remove('hide')
 
-            qst.style.display = 'block';
-
             chaildQstList.forEach((btn, i) => {
                 btn.classList.remove('activity')
 
-                if (qstPule[i].completed) {
+                if (qstPule[i].correctAnswerId) {
                     btn.style.backgroundColor = '#82dd86';
                 }
             });
@@ -163,13 +134,15 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCnf.addEventListener('click', () => {
         if (answerСheck == qstPule[counter].correctAnswer && qstPule[counter].completed == false) {
             totalCorrectAnsver++;
-            qstPule[counter].completed = true;
+            qstPule[counter].correctAnswerId = true
         };
+
+        if(!qstPule[counter].completed) {
+            qstPule[counter].completed = true;
+        }
 
         if(counter == qstPule.length - 1) {
             btnNext.textContent = 'Завершити';
-            
-         
         } else {
             btnNext.textContent = 'Далі';
         }
