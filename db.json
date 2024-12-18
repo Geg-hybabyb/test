@@ -1,0 +1,22 @@
+{
+    "qstPule": [
+        {
+            "question":"Скільки сезонів в році?",
+            "ansver":[1,2,3,4],
+            "correctAnswer":4,
+            "completed":false
+        },
+        {
+            "question":"Хто найкрутіший?",
+            "ansver":["Автор сайта","Мама","В.Зеленській","Я"],
+            "correctAnswer":"Мама",
+            "completed":false
+        },
+        {
+            "question":"Коли?",
+            "ansver":[1923,988,585,4],
+            "correctAnswer":988,
+            "completed":false
+        }
+    ]
+}
