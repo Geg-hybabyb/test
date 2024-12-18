@@ -5,13 +5,19 @@ function test() {
           ansverBlock = document.querySelector('.answers'),
           btnCnf = document.querySelector('.confirm'),
           qstList = document.querySelector('.quest-list'),
-          btnNext = document.querySelector('.next');
+          btnNext = document.querySelector('.next'),
+          progressLine = document.querySelector('.progress-line'),
+          width = window.getComputedStyle(progressLine).width;
 
         const getResourse = async (url) => {
             const res = await fetch(url);
 
             return await res.json()
         };
+
+        function cleanSize(som) {
+            return +som.replace(/\D/g, '');
+        }
     
     getResourse('http://localhost:3000/qstPule')
         .then(qstPule => {
@@ -24,17 +30,21 @@ function test() {
                 });
 
                 let counter = 0,
-                answerСheck,
-                totalCorrectAnsver = 0;
+                    answerСheck,
+                    totalCorrectAnsver = 0,
+                    offer = 0;
         
             chaildQstList = document.querySelectorAll('.quest-list-chailds');
-        
+
             chaildQstList.forEach(block => {
                 block.addEventListener('click', (e) => {
                     qstPule.forEach((item, i) => {
                         if(i == e.target.getAttribute('data-list')){
                             counter = e.target.getAttribute('data-list');   
         
+                            offer = cleanSize(width) / qstPule.length * e.target.getAttribute('data-list');
+                            progressLine.style.transform = `translate(${offer}px)`;
+
                             nextQuestion()
                             if(qstPule[counter].completed === true) {
                                 ansverBlock.removeEventListener('click', elem);
@@ -86,6 +96,9 @@ function test() {
                     btnNext.classList.add('hide');
                     btnCnf.classList.remove('hide')
                 }
+
+                offer += cleanSize(width) / qstPule.length;
+                progressLine.style.transform = `translate(${offer}px)`;
         
                 if(counter < qstPule.length - 1) {
                     counter++
@@ -104,6 +117,7 @@ function test() {
                     totalMistake.textContent = `Всього помилок: ${qstPule.length - totalCorrectAnsver}`;
         
                     document.querySelector('.result-block').classList.remove('hide')
+                    qst.classList.add('hide')
         
                     chaildQstList.forEach((btn, i) => {
                         btn.classList.remove('activity')
@@ -142,7 +156,7 @@ function test() {
                 btnCnf.classList.add('hide');
                 btnNext.classList.remove('hide')
             });
-        });      
+        });
 }
 
 module.exports = test;
